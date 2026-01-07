@@ -3,126 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Strange Holographic Sanctum</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Sorcerer Mobile Vault - 3D Tunnel</title>
     <style>
         :root {
             --gold: #ffaa00; --red: #ff2200; --cyan: #00ffff; 
-            --spark: #ffed00; --pink: #ff00ff; --matrix: #00ff41;
-            --bg: #010103;
-            --hologram-opacity: 0.7;
+            --spark: #ffea00; --pink: #ff00ff; --matrix: #00ff41;
+            --bg: #050508;
+        }
+
+        /* --- EFEITO TÚNEL 3D NO BACKGROUND --- */
+        body { 
+            background: radial-gradient(circle at center, #111 0%, #000 70%);
+            height: 100vh; 
+            display: flex; justify-content: center; align-items: center; 
+            overflow: hidden;
+            perspective: 1000px; /* Ativa o 3D */
+        }
+
+        /* Partículas de Fundo (Poeira Cósmica) */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%; height: 200%;
+            background-image: radial-gradient(#fff 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.1;
+            animation: tunnel-move 10s linear infinite;
+        }
+
+        @keyframes tunnel-move {
+            from { transform: translateZ(-500px); }
+            to { transform: translateZ(500px); }
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: var(--bg); 
-            height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            overflow: hidden;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
         .state-radio { display: none; }
 
-        /* --- MANTRAS: MOVIMENTO COM INTENÇÃO --- */
-        @keyframes rotate-main {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+        /* --- ANIMAÇÕES --- */
+        @keyframes rotate-clockwise {
+            from { transform: translate(-50%, -50%) rotate(var(--base-rot)); }
+            to { transform: translate(-50%, -50%) rotate(calc(var(--base-rot) + 360deg)); }
+        }
+        @keyframes rotate-counter {
+            from { transform: translate(-50%, -50%) rotate(var(--base-rot)); }
+            to { transform: translate(-50%, -50%) rotate(calc(var(--base-rot) - 360deg)); }
         }
 
-        @keyframes rotate-reverse {
-            from { transform: translate(-50%, -50%) rotate(360deg); }
-            to { transform: translate(-50%, -50%) rotate(0deg); }
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { filter: brightness(1) contrast(1.2) drop-shadow(0 0 10px currentColor); }
-            50% { filter: brightness(1.4) contrast(1.5) drop-shadow(0 0 25px currentColor); }
-        }
-
-        /* --- ESTRUTURA DO PORTAL --- */
+        /* --- CONTAINER RESPONSIVO (MOBILE FIRST) --- */
         .sanctum { 
             position: relative; 
-            width: 600px; 
-            height: 600px; 
-            animation: pulse-glow 2s ease-in-out infinite;
+            /* No Mobile é baseado na largura da tela (vw) */
+            width: 90vw; height: 90vw; 
+            max-width: 600px; max-height: 600px;
+            display: flex; justify-content: center; align-items: center;
+            transform-style: preserve-3d;
         }
 
-        /* Scanlines (Efeito Holograma) */
-        .sanctum::before {
-            content: "";
+        /* --- LUZ: PORTAL (Ajustado para VW) --- */
+        .fire-portal {
             position: absolute;
-            inset: -100px;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 4px, 3px 100%;
-            z-index: 20;
-            pointer-events: none;
+            top: 50%; left: 50%;
+            width: 70vw; height: 70vw;
+            max-width: 440px; max-height: 440px;
             border-radius: 50%;
+            border: var(--line-thick) solid #fff;
+            box-shadow: 0 0 10px #fff, 0 0 var(--glow-size) currentColor;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: rotate-clockwise var(--dur) linear infinite;
+            --base-rot: 0deg;
+            z-index: 10;
         }
+
+        /* --- OBJETO: QUADRADOS COM ENCAIXE PRECISO --- */
+        .mandala-part {
+            position: absolute;
+            top: 50%; left: 50%;
+            /* Baseado no tamanho do portal via variável */
+            width: calc(var(--geo-size) * var(--scale));
+            height: calc(var(--geo-size) * var(--scale));
+            border: var(--geo-border) solid currentColor;
+            box-shadow: 0 0 var(--geo-glow) currentColor;
+            opacity: var(--mandala-op);
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Escalas de encaixe (0.707 para as pontas se tocarem) */
+        .p1 { --scale: 0.5; animation: rotate-clockwise var(--dur) linear infinite; }    
+        .p2 { --scale: 0.707; animation: rotate-counter calc(var(--dur) * 1.5) linear infinite; } 
+        .p3 { --scale: 1.0; animation: rotate-clockwise calc(var(--dur) * 2) linear infinite; }   
+
+        /* --- PROGRESSÃO MOBILE FIRST --- */
+        #s1:checked ~ .sanctum { 
+            color: var(--gold); --dur: 40s; --mandala-op: 0.9; 
+            --glow-size: 5px; --line-thick: 1px;
+            --geo-border: 1px; --geo-glow: 0px; 
+            --geo-size: 50vw; /* p3 beija o círculo em mobile */
+        }
+        
+        #s6:checked ~ .sanctum { 
+            color: var(--matrix); --dur: 0.5s; --mandala-op: 0.3; 
+            --glow-size: 80px; --line-thick: 10px;
+            --geo-border: 8px; --geo-glow: 40px; 
+            --geo-size: 120vw; /* Expande para fora da tela do celular */
+        }
+
+        /* Ajustes para Desktop */
+        @media (min-width: 768px) {
+            #s1:checked ~ .sanctum { --geo-size: 311px; }
+            .fire-portal { width: 440px; height: 440px; }
+            #s6:checked ~ .sanctum { --geo-size: 800px; }
+        }
+
+        /* Outros estados simplificados para o exemplo */
+        #s2:checked ~ .sanctum { color: var(--red); --dur: 20s; --mandala-op: 0.8; --glow-size: 20px; --line-thick: 2px; --geo-border: 2px; --geo-size: 60vw; }
+        #s3:checked ~ .sanctum { color: var(--cyan); --dur: 10s; --mandala-op: 0.7; --glow-size: 30px; --line-thick: 3px; --geo-border: 3px; --geo-size: 70vw; }
+        #s4:checked ~ .sanctum { color: var(--spark); --dur: 5s; --mandala-op: 0.6; --glow-size: 45px; --line-thick: 5px; --geo-border: 5px; --geo-size: 90vw; }
+        #s5:checked ~ .sanctum { color: var(--pink); --dur: 1.5s; --mandala-op: 0.4; --glow-size: 60px; --line-thick: 8px; --geo-border: 6px; --geo-size: 110vw; }
 
         .trigger { position: absolute; inset: 0; border-radius: 50%; z-index: 100; cursor: pointer; display: none; }
-        
         #s1:checked ~ .sanctum .trigger[for="s2"], #s2:checked ~ .sanctum .trigger[for="s3"],
         #s3:checked ~ .sanctum .trigger[for="s4"], #s4:checked ~ .sanctum .trigger[for="s5"],
         #s5:checked ~ .sanctum .trigger[for="s6"], #s6:checked ~ .sanctum .trigger[for="s1"] { display: block; }
-
-        /* --- CAMADAS DE OBJETO --- */
-        .layer {
-            position: absolute; top: 50%; left: 50%;
-            border: 2px dashed currentColor; /* Aspecto técnico/místico */
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            opacity: var(--hologram-opacity);
-        }
-        
-        /* O anel de "fogo" principal (inspirado na imagem) */
-        .outer-ring { 
-            width: 420px; height: 420px; 
-            border-radius: 50%; 
-            border-width: 6px; 
-            border-style: double;
-            animation: rotate-main 20s linear infinite; 
-        }
-
-        .inner-dna { 
-            width: 300px; height: 300px; 
-            border-width: 1px;
-            animation: rotate-reverse var(--dur) linear infinite; 
-        }
-
-        .eye-center { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            font-size: 4rem; border: none; z-index: 10;
-            text-shadow: 0 0 20px currentColor;
-        }
-
-        .sphere {
-            position: absolute; top: 50%; left: 50%;
-            width: 30px; height: 30px;
-            margin: -15px;
-            background: rgba(0,0,0,0.8);
-            border: 2px solid currentColor;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            animation: orbit-portal var(--dur) linear infinite;
-            box-shadow: 0 0 20px currentColor;
-        }
-
-        @keyframes orbit-portal {
-            0% { transform: rotate(var(--angle)) translateX(var(--dist)) rotate(calc(var(--angle) * -1)); }
-            100% { transform: rotate(calc(var(--angle) + 360deg)) translateX(var(--dist)) rotate(calc((var(--angle) + 360deg) * -1)); }
-        }
-
-        /* --- LÓGICA DE ESTADOS (MANTRA: LUZ DEFINE TUDO) --- */
-        #s1:checked ~ .sanctum { color: var(--gold); --dur: 15s; }
-        #s2:checked ~ .sanctum { color: var(--red); --dur: 8s; }
-        #s3:checked ~ .sanctum { color: var(--cyan); --dur: 4s; }
-        #s4:checked ~ .sanctum { color: var(--spark); --dur: 2s; }
-        #s5:checked ~ .sanctum { color: var(--pink); --dur: 1s; }
-        #s6:checked ~ .sanctum { color: var(--matrix); --dur: 0.5s; }
-
     </style>
 </head>
 <body>
@@ -142,15 +143,11 @@
         <label for="s5" class="trigger"></label>
         <label for="s6" class="trigger"></label>
 
-        <div class="layer outer-ring"></div>
-        <div class="layer inner-dna"></div>
-        
-        <i class="fas fa-eye eye-center"></i>
+        <div class="fire-portal"></div>
 
-        <div class="sphere" style="--dist: 210px; --angle: 0deg;"><i class="fas fa-bolt"></i></div>
-        <div class="sphere" style="--dist: 210px; --angle: 90deg;"><i class="fas fa-fire"></i></div>
-        <div class="sphere" style="--dist: 210px; --angle: 180deg;"><i class="fas fa-water"></i></div>
-        <div class="sphere" style="--dist: 210px; --angle: 270deg;"><i class="fas fa-wind"></i></div>
+        <div class="mandala-part p1" style="--base-rot: 0deg; border-style: double;"></div>
+        <div class="mandala-part p2" style="--base-rot: 45deg;"></div>
+        <div class="mandala-part p3" style="--base-rot: 0deg;"></div>
     </div>
 
 </body>
