@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Strange Holographic Sanctum</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #ffaa00; --red: #ff2200; --cyan: #00ffff; 
+            --spark: #ffed00; --pink: #ff00ff; --matrix: #00ff41;
+            --bg: #010103;
+            --hologram-opacity: 0.7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: var(--bg); 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .state-radio { display: none; }
+
+        /* --- MANTRAS: MOVIMENTO COM INTENÇÃO --- */
+        @keyframes rotate-main {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes rotate-reverse {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { filter: brightness(1) contrast(1.2) drop-shadow(0 0 10px currentColor); }
+            50% { filter: brightness(1.4) contrast(1.5) drop-shadow(0 0 25px currentColor); }
+        }
+
+        /* --- ESTRUTURA DO PORTAL --- */
+        .sanctum { 
+            position: relative; 
+            width: 600px; 
+            height: 600px; 
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* Scanlines (Efeito Holograma) */
+        .sanctum::before {
+            content: "";
+            position: absolute;
+            inset: -100px;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 3px 100%;
+            z-index: 20;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        .trigger { position: absolute; inset: 0; border-radius: 50%; z-index: 100; cursor: pointer; display: none; }
+        
+        #s1:checked ~ .sanctum .trigger[for="s2"], #s2:checked ~ .sanctum .trigger[for="s3"],
+        #s3:checked ~ .sanctum .trigger[for="s4"], #s4:checked ~ .sanctum .trigger[for="s5"],
+        #s5:checked ~ .sanctum .trigger[for="s6"], #s6:checked ~ .sanctum .trigger[for="s1"] { display: block; }
+
+        /* --- CAMADAS DE OBJETO --- */
+        .layer {
+            position: absolute; top: 50%; left: 50%;
+            border: 2px dashed currentColor; /* Aspecto técnico/místico */
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: var(--hologram-opacity);
+        }
+        
+        /* O anel de "fogo" principal (inspirado na imagem) */
+        .outer-ring { 
+            width: 420px; height: 420px; 
+            border-radius: 50%; 
+            border-width: 6px; 
+            border-style: double;
+            animation: rotate-main 20s linear infinite; 
+        }
+
+        .inner-dna { 
+            width: 300px; height: 300px; 
+            border-width: 1px;
+            animation: rotate-reverse var(--dur) linear infinite; 
+        }
+
+        .eye-center { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            font-size: 4rem; border: none; z-index: 10;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .sphere {
+            position: absolute; top: 50%; left: 50%;
+            width: 30px; height: 30px;
+            margin: -15px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            animation: orbit-portal var(--dur) linear infinite;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        @keyframes orbit-portal {
+            0% { transform: rotate(var(--angle)) translateX(var(--dist)) rotate(calc(var(--angle) * -1)); }
+            100% { transform: rotate(calc(var(--angle) + 360deg)) translateX(var(--dist)) rotate(calc((var(--angle) + 360deg) * -1)); }
+        }
+
+        /* --- LÓGICA DE ESTADOS (MANTRA: LUZ DEFINE TUDO) --- */
+        #s1:checked ~ .sanctum { color: var(--gold); --dur: 15s; }
+        #s2:checked ~ .sanctum { color: var(--red); --dur: 8s; }
+        #s3:checked ~ .sanctum { color: var(--cyan); --dur: 4s; }
+        #s4:checked ~ .sanctum { color: var(--spark); --dur: 2s; }
+        #s5:checked ~ .sanctum { color: var(--pink); --dur: 1s; }
+        #s6:checked ~ .sanctum { color: var(--matrix); --dur: 0.5s; }
+
+    </style>
+</head>
+<body>
+
+    <input type="radio" id="s1" name="m" class="state-radio" checked>
+    <input type="radio" id="s2" name="m" class="state-radio">
+    <input type="radio" id="s3" name="m" class="state-radio">
+    <input type="radio" id="s4" name="m" class="state-radio">
+    <input type="radio" id="s5" name="m" class="state-radio">
+    <input type="radio" id="s6" name="m" class="state-radio">
+
+    <div class="sanctum">
+        <label for="s1" class="trigger"></label>
+        <label for="s2" class="trigger"></label>
+        <label for="s3" class="trigger"></label>
+        <label for="s4" class="trigger"></label>
+        <label for="s5" class="trigger"></label>
+        <label for="s6" class="trigger"></label>
+
+        <div class="layer outer-ring"></div>
+        <div class="layer inner-dna"></div>
+        
+        <i class="fas fa-eye eye-center"></i>
+
+        <div class="sphere" style="--dist: 210px; --angle: 0deg;"><i class="fas fa-bolt"></i></div>
+        <div class="sphere" style="--dist: 210px; --angle: 90deg;"><i class="fas fa-fire"></i></div>
+        <div class="sphere" style="--dist: 210px; --angle: 180deg;"><i class="fas fa-water"></i></div>
+        <div class="sphere" style="--dist: 210px; --angle: 270deg;"><i class="fas fa-wind"></i></div>
+    </div>
+
+</body>
+</html>
